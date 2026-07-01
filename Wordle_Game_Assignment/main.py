@@ -1,12 +1,14 @@
 import random
-import subprocess
 import os
 
 print("Game started")
 def load_words():
     word_list = []   # list which store all the words jun chai file bata read gariyeko hunxa
     try:
-        file = open("words.txt","r")
+        folder = os.path.dirname(__file__)
+        path = os.path.join(folder, "words.txt")
+        file = open(path, "r")
+        # file = open("words.txt","r")
         for line in file:
             word = line.strip().upper()
             word_list.append(word)
@@ -34,7 +36,7 @@ def is_valid_guess(guess, word_list):
  
 def check_guess(guess,hidden_word):
     result = ["."]*5
-    leftover = {}
+    leftover = {}     #dictionary
     #Exact match find gareyko
     for i in range(5):
         if guess[i] == hidden_word[i]:
@@ -45,7 +47,7 @@ def check_guess(guess,hidden_word):
     
     for i in range(5):
         if result[i] != "_/":
-            letter = guess(i)
+            letter = guess[i]
             if letter in leftover and leftover[letter] > 0:
                 result[i] = "*"
                 leftover[letter] -=1
@@ -59,20 +61,40 @@ def display_rules():
     print("_/ = correct letter and correct position")
     print("* = correct letter but wrong position")
     print(". = letter not present")
-    print("You have total attempts.")
+    print("You have 6 attempts.")
 
-def play_game(guess,computer):
-    if guess == computer:
-        print("Congratulations!")
-        print("You guess the game in X attempts.")
-        print("End of the game")
-    else:
-        print("Game Over!")    
-        print(f"The correct word was: {computer}")
+def play_game(word_list, hidden_word):
+    attempts = 6
+    
+    while attempts >0:
+        guess = input("Enter a 5-letter guess: ").upper()
+
+        if not is_valid_guess(guess,word_list):
+            print("Invalid guess! Try again.")
+            continue
+        else:
+            result = check_guess(guess,hidden_word)
+            print("Result: ", " ".join(result))
+
+        if result == ["_/","_/","_/","_/","_/"]:
+            print("Congratulations!")
+            print(f"You guess it in {6- attempts + 1} attempts.")
+            print("End of the game")
+            return
+        
+        attempts -=1
+        print(f"You have {attempts} attempts left.") 
+        
+    print("Game Over!")
+    print(f"The hidden word was: {hidden_word}")
 
 
 def main():
-    play_game()
+    display_rules()
+    word_list = load_words()
+    hidden_word = choose_word(word_list)
+    play_game(word_list,hidden_word)
+
 
 
 
