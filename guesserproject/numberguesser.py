@@ -40,5 +40,5 @@ def game():
 
 
 if __name__ == "__main__":  #main block
-    print("I am the test line")
+    print("I am the test line")   # directly run garey chalxa arko thauma import garna khojda chaldaina
     game()
